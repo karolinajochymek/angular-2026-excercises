@@ -1,0 +1,68 @@
+<!-- Temat: signals i binding. Kontrolki Material korzystają z tych samych powiązań co natywne elementy HTML. -->
+<section class="catalog-section" aria-labelledby="list-title">
+  <div class="section-heading">
+    <h2 id="list-title">Produkty</h2>
+    <p class="section-description">
+      Wyszukaj produkt, sprawdź dostępność i wybierz pozycję z listy.
+    </p>
+  </div>
+  <div class="toolbar">
+    <mat-form-field class="search-field" appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Szukaj produktu</mat-label>
+      <input matInput type="search" [ngModel]="filter()" (ngModelChange)="filter.set($event)" />
+    </mat-form-field>
+    <app-stock-toggle [(checked)]="onlyAvailable" />
+    <button mat-stroked-button type="button" (click)="restock()">Dostawa +1 szt.</button>
+  </div>
+  <div class="results-row">
+    <p class="result-count" aria-live="polite">Wyniki: {{ filteredItems().length }}</p>
+    @if (selectedItem(); as selected) {
+      <p>
+        Wybrano: <strong>{{ selected.name }}</strong>
+      </p>
+    }
+  </div>
+  <!-- Lista tworzy dzieci; track zachowuje powiązanie wiersza z id produktu. -->
+  <div class="table-scroll" role="region" aria-label="Tabela produktów" tabindex="0">
+    <table class="products-table">
+      <thead>
+        <tr>
+          <th scope="col">Nazwa</th>
+          <th scope="col">Typ</th>
+          <th scope="col" class="number-cell">Ilość</th>
+          <th scope="col" class="number-cell">Cena</th>
+          <th scope="col">Wybierz</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of filteredItems(); track item.id) {
+          <!-- $odd i $first opisują pozycję po filtrowaniu; track id opisuje tożsamość produktu. -->
+          <!-- app-item uruchamia komponent na tr; jego szablon zawiera pięć komórek td. -->
+          <tr
+            app-item
+            [item]="item"
+            
+            
+            [selected]="selectedId() === item.id"
+            (picked)="selectedId.set($event)"
+            [appHighlight]="'var(--mat-sys-primary)'"
+          ></tr>
+        } @empty {
+          <tr>
+            <td class="empty-state" colspan="5">Brak produktów spełniających warunki.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <!-- @defer pobierze kod podsumowania dopiero po interakcji z placeholderem. -->
+  @defer (on interaction) {
+    <app-inventory-summary [items]="items()" />
+  } @placeholder {
+    <button mat-stroked-button type="button">Pokaż podsumowanie magazynu</button>
+  } @loading (minimum 200ms) {
+    <p>Ładowanie podsumowania…</p>
+  } @error {
+    <p>Nie udało się załadować podsumowania. Odśwież stronę.</p>
+  }
+</section>

@@ -1,0 +1,28 @@
+<!-- TODO P1.2–3: dodaj emisję zdarzenia, etykietę, styl oraz format ceny. -->
+<!-- Cały wiersz należy do dziecka: prezentacja danych, formatowanie i akcja wyboru. -->
+<td>{{ item().name }}</td>
+<td>
+  @switch (item().category) {
+    @case ('biuro') {
+      Artykuły biurowe
+    }
+    @case ('elektronika') {
+      Elektronika
+    }
+  }
+</td>
+<!-- Binding stylu nie zmienia danych, a pipe przygotowuje opis dostępności. -->
+<td class="number-cell"  [title]="item().quantity | stockLabel">{{ item().quantity }}</td>
+<td class="number-cell">{{ item().price }}</td>
+<td>
+  <!-- Dziecko zgłasza intencję. To rodzic zapisuje wybór i przekazuje nowy selected. -->
+  <button
+    mat-button
+    type="button"
+    [attr.aria-pressed]="selected()"
+    
+    
+  >
+    {{ selected() ? 'Wybrano' : 'Wybierz' }}
+  </button>
+</td>

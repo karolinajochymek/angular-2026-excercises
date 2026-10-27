@@ -1,13 +1,13 @@
-# Kryteria odbioru części 1
+# Kryteria odbioru części 2
 
-- [ ] Pusty filtr pokazuje wszystkie produkty; filtr z otaczającymi spacjami działa tak samo jak bez nich.
-- [ ] Wielkość liter nie wpływa na wynik; niepasująca nazwa pokazuje komunikat pustego wyniku.
-- [ ] Tylko dostępne ukrywa quantity = 0; wyłączenie przywraca produkty.
-- [ ] Dostawa zwiększa każdą ilość o 1; aktualizuje filtr i podsumowanie, bez mutowania poprzedniej tablicy.
-- [ ] Wybranie wiersza zmienia stan rodzica, a wybrane id pozostaje to samo po dostawie.
-- [ ] Cena ma walutę PLN i dwa miejsca dziesiętne; opis zapasu respektuje próg.
-- [ ] -1 i 0 → brak; 3 → ostatnie; 4 → dostępne; 4 przy progu 5 → ostatnie.
-- [ ] Naprzemienne wiersze i pierwszy wiersz aktualizują się po filtrowaniu.
-- [ ] Tab/Enter pozwala wybrać produkt; etykieta przycisku zawiera jego nazwę.
-- [ ] Podświetlenie pojawia się i znika po myszce oraz fokusie.
-- [ ] Potrafię wskazać signal, computed, input, output, pipe i dyrektywę.
+- [ ] Network pokazuje pobranie JSON; lista nie opiera się już na imporcie ITEMS.
+- [ ] Loading, pusta odpowiedź i błąd są odróżnione w widoku.
+- [ ] Po error → normal lista ponownie się ładuje.
+- [ ] Link z listy otwiera kartę produktu, a karta formularz właściwego id.
+- [ ] /items/abc oraz /items/0 przekierowują do listy; /items/9999 pokazuje brak produktu.
+- [ ] Pusta nazwa, same spacje, ujemna cena i ułamkowa ilość blokują zapis.
+- [ ] Poprawny zapis jest widoczny w karcie i liście; odświeżenie usuwa lokalne edycje.
+- [ ] Dirty + anulowanie wyjścia pozostawia formularz; potwierdzenie pozwala wyjść.
+- [ ] Po zapisie formularz jest pristine i guard nie pyta ponownie.
+- [ ] Test guarda przepuszcza poprawne id i sprawdza UrlTree /items dla błędnych wartości; nie pozostały TODO P2.4.
+- [ ] Potrafię prześledzić RouterLink → parametr → serwis → stan → widok.

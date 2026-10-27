@@ -1,3 +1,9 @@
 import { ApplicationConfig } from '@angular/core';
-// Angular 22 domyślnie działa bez Zone.js. Providers dodamy w części 2.
-export const appConfig: ApplicationConfig = { providers: [] };
+import { provideRouter } from '@angular/router';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { routes } from './app.routes';
+import { trainingInterceptor } from './core/interceptors/training.interceptor';
+export const appConfig: ApplicationConfig = {
+  // Angular 22 domyślnie używa fetch. WithFetch nie jest potrzebne.
+  providers: [provideRouter(routes), provideHttpClient(withInterceptors([trainingInterceptor]))],
+};

@@ -56,11 +56,11 @@ nie twórz zastępczego pustego brancha.
 Windows, PowerShell:
 
 ```powershell
-git clone --branch starter-1 https://github.com/karolinajochymek/angular-2026-excercises.git
+git clone --branch solutions-2 https://github.com/karolinajochymek/angular-2026-excercises.git
 cd angular-2026-excercises
 git branch --show-current
 ```
-Te same polecenia Git i `cd` działają na macOS/Linux. Oczekiwany branch: `starter-1`.
+Te same polecenia Git i `cd` działają na macOS/Linux. Oczekiwany branch: `solutions-2`.
 Repozytorium ćwiczeń ma warianty starter-1, solutions-1, starter-2 i solutions-2.
 Branche będą dostępne po publikacji przez prowadzącą; wcześniej korzystaj z otrzymanych folderów.
 

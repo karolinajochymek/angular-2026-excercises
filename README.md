@@ -1,6 +1,6 @@
-# Angular 2026 — ćwiczenia, część 1
+# Angular 2026 — ćwiczenia, część 2
 
-Wariant: **starter-1**. Starter z celowymi TODO. Interfejs się uruchamia, ale zadania nie są jeszcze wykonane.
+Wariant: **solutions-2**. Przykładowe rozwiązanie — istnieją również inne poprawne implementacje.
 
 ## Start
 
@@ -20,6 +20,8 @@ npm run build
 ```
 
 Polecenia: [ZADANIA.md](ZADANIA.md). Kryteria: [CHECKLISTA.md](CHECKLISTA.md). Diagnoza: [DIAGNOZOWANIE.md](DIAGNOZOWANIE.md).
+
+Omówienie implementacji i odpowiedź do ćwiczenia legacy: [ROZWIAZANIE.md](ROZWIAZANIE.md). Ten wariant zawiera ukończone zadania obowiązkowe i wykonywane testy; nie pozostawia testów TODO.
 W starterze testy TODO są pomijane — zielony wynik testu danych nie oznacza wykonania ćwiczenia. Nie ma celowych błędów kompilacji. Materiały HTML i notatki prowadzącej są udostępniane osobno, poza repozytorium.
 
 ## Warianty repozytorium

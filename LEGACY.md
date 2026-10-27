@@ -1,30 +1,31 @@
-# Bonus: odczytaj komponent ze starszym zapisem (10–15 min)
+# Bonus: odczytaj sprzątanie subskrypcji (10–15 min)
 
-Nie dodawaj drugiej aplikacji. Zapisz odpowiedź w swoim pliku NOTATKI.md.
-
-Poglądowy szablon rodzica (items jest tu zwykłą tablicą):
-
-```html
-<app-row *ngFor="let item of items; trackBy: trackId"
-  [item]="item" (picked)="selectedId = $event" />
-```
-
-Kontrakt dziecka:
+Zapisz odpowiedź w NOTATKI.md; nie zmieniaj działającej aplikacji. Fragment poglądowy
+pomija importy i pozostałe pola komponentu:
 
 ```ts
-@Input({ required: true }) item!: Item;
-@Output() picked = new EventEmitter<number>();
+private readonly destroy$ = new Subject<void>();
+constructor() {
+  this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+    console.log(params.get('id'));
+  });
+}
+ngOnDestroy() {
+  this.destroy$.next();
+  this.destroy$.complete();
+}
 ```
 
-1. Wskaż, co płynie od rodzica do dziecka, a co wraca jako zdarzenie.
-2. Zapisz odpowiednik z @for, input.required i output. W nowym przykładzie items
-   oraz selectedId są sygnałami. Zachowaj identyfikator produktu jako klucz.
-3. Wyjaśnij, dlaczego nie zastępujemy klucza indeksem przy filtrowanej liście.
-4. Czy sam dekorator @Input dowodzi, że projekt używa starej wersji Angulara?
+1. Co uruchamia subskrypcję i co ją kończy? Dlaczego samo complete na destroy$
+   nie zastępuje wyemitowania wartości do takeUntil?
+2. Zapisz odpowiednik z takeUntilDestroyed w konstruktorze. Które elementy można usunąć?
+3. Wyjaśnij różnicę pomiędzy pojedynczą odpowiedzią HTTP a obserwacją kolejnych parametrów trasy.
+4. Spotykasz klasę `implements CanActivate`. Czy oznacza to niewspierany kod?
+   Nazwij funkcjonalny odpowiednik używany w tym repozytorium.
 
-Wskazówki: część 1, slajd 17 „Ten sam kontrakt, nowy zapis”, slajd 20
-„Lista i tożsamość elementów”, slajd 22 „Control flow w starszym kodzie”.
-[Wejścia](https://angular.dev/guide/components/inputs) · [Control flow](https://angular.dev/guide/templates/control-flow).
+Wskazówki: część 2, slajd 10 „Kto sprząta subskrypcję?”, slajd 14
+„Parametr może zmienić się w czasie”, slajd 19 „Guard kontroluje nawigację”.
+[Sprzątanie](https://angular.dev/ecosystem/rxjs-interop/take-until-destroyed) ·
+[CanActivate](https://angular.dev/api/router/CanActivate).
 
-Kryterium: potrafisz wyjaśnić kierunki danych i zachować zachowanie po zmianie składni.
-Nie oceniaj poprawności projektu wyłącznie po wieku użytych API.
+Kryterium: wyjaśniasz czas życia subskrypcji i rozróżniasz starszy zapis od usuniętego API.

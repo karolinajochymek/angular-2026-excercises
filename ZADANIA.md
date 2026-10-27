@@ -1,7 +1,6 @@
-# Zadania po części 1 — katalog produktów
+# Zadania po części 2 — dane, adres i edycja
 
-Zadania są dobrowolne, poza czasem szkolenia. Orientacyjnie 90–150 minut; pracuj etapami.
-Starter uruchamia się, ale miejsca TODO celowo nie realizują wszystkich zachowań. Gotowe kontrolki i układ Material pozwalają skupić się na Angularze. Nie przebudowuj stylów ani całej aplikacji.
+Orientacyjnie 120–180 minut, poza szkoleniem. Starter zawiera ukończone podstawy listy; nie musisz kończyć części 1, żeby zacząć. Gotowe widoki i strumienie stanu służą jako rusztowanie — uzupełnij wskazane TODO i prześledź ich działanie.
 
 
 ## Jak pracować z zestawem
@@ -22,125 +21,119 @@ Wskazówki podają numer i dokładny tytuł slajdu głównej prezentacji szkolen
 przekazanej osobno. Numeracja odpowiada materiałom z 26.10.2026; prezentacja
 nie jest dołączona do repozytorium. Odnośniki do dokumentacji są dodatkową pomocą.
 
-## 1. Stan i filtrowanie (25–35 min)
+## 1. Serwis i HTTP (25–40 min)
 
-**Cel:** użytkownik zawęża listę, a dostawa aktualizuje zarówno dane, jak i wynik filtrowania.
+**Cel:** dane listy pochodzą z żądania HTTP, a widok potrafi wrócić do działania po błędzie.
 
-**Sprawdź wynik:** wpisz fragment nazwy istniejącego produktu małymi i wielkimi literami,
-a następnie dodaj spacje na początku/końcu — wynik powinien być ten sam.
-Nieistniejąca nazwa daje pustą listę. Wyczyść filtr: wszystkie produkty wracają.
-Włącz tylko dostępne: produkty z ilością 0 znikają. Kliknij dostawę: każda ilość rośnie
-o 1 i lista ponownie uwzględnia produkty, które właśnie stały się dostępne.
-Wyjaśnij, dlaczego computed wystarcza bez effect.
+**Sprawdź wynik:** w Network zobacz GET /assets/items.json. Tryb empty ma pokazać
+pusty wynik, a error komunikat błędu. Po przełączeniu z error na normal lista wraca
+bez odświeżania strony. Jeśli loading znika za szybko, włącz spowolnienie sieci
+w narzędziach przeglądarki. Nie twórz prawdziwego backendu ani POST.
 
 **Co zrobić:**
 
-Plik: `src/app/features/items/items-list/items-list.component.ts`.
-- Uzupełnij `filteredItems` jako computed: nazwa zawiera tekst filtra po trim i bez rozróżniania wielkości liter, a przy onlyAvailable produkt ma quantity > 0.
-- `restock()` dodaje jedną sztukę każdemu produktowi przez update; twórz nową tablicę i obiekty.
-- Nie przechowuj kopii filtrowanej listy w dodatkowym signal ani effect.
-- Sprawdź pusty filtr, spacje, brak wyniku i przełącznik dostępności.
-Źródło: https://angular.dev/guide/signals
+`src/app/core/services/catalog.service.ts`: zastąp dane lokalne przez HttpClient. Tryby normal/empty/error używają odpowiednio `/assets/items.json`, `/assets/empty.json`, `/assets/missing-demo.json`. Ostatni plik celowo nie istnieje.
+Użyj inject(HttpClient). getItems zwraca Observable, a getItem wybiera produkt po id. Widok ma już loading/success/error i catchError wewnątrz switchMap — wyjaśnij dlaczego.
+Zachowaj mapowanie lokalnych edycji na pobrane produkty. saveItem zapisuje wyłącznie w pamięci serwisu, nie wysyła POST; odświeżenie przywraca dane z JSON.
+Sprawdź Network oraz sekwencję normal → error → normal; druga poprawna odpowiedź ma się pokazać.
+Źródła: https://angular.dev/guide/http/making-requests · https://angular.dev/ecosystem/rxjs-interop
 
 **Wskazówki ze szkolenia:**
 
-- Część 1, slajd 11: „signal: odczyt i zapis”.
-- Część 1, slajd 12: „Stan i wartość pochodna”.
-- Część 1, slajd 13: „Aktualizacja kolekcji”.
-- Część 1, slajd 10: „Pole wyszukiwania”.
+- Część 2, slajd 3: „Serwis oddziela dane od widoku”.
+- Część 2, slajd 4: „inject: poproś o zależność”.
+- Część 2, slajd 6: „Observable opisuje wartości w czasie”.
+- Część 2, slajd 7: „HttpClient: żądanie i odpowiedź”.
+- Część 2, slajd 8: „Widok ma więcej niż jeden stan”.
+- Część 2, slajd 9: „switchMap wybiera najnowsze żądanie”.
+- Część 2, slajd 10: „Kto sprząta subskrypcję?”.
 
-## 2. Wiersz i komunikacja (20–30 min)
+## 2. Routing i szczegóły (25–35 min)
 
-**Cel:** wiersz informuje rodzica o wyborze, a rodzic zarządza wybranym identyfikatorem.
+**Cel:** adres wybiera produkt, a walidacja formatu id jest oddzielona od wyszukania danych.
 
-**Sprawdź wynik:** wybierz produkt, zmień filtr i wykonaj dostawę. Jeżeli wybrany produkt
-jest widoczny, nadal jest wybrany według id, a nie pozycji na liście.
-Po filtrowaniu pierwsza pozycja ma klasę first-row, a naprzemienne wiersze alternate-row.
-Przejdź Tab do przycisku i sprawdź jego nazwę dostępną w narzędziach przeglądarki:
-ma zawierać nazwę konkretnego produktu. Ilość 0 jest wyróżniona wagą tekstu.
+**Sprawdź wynik:** przejdź z listy do istniejącego produktu i edycji, następnie wróć.
+Adresy /items/abc, /items/0 i /items/-1 kierują do listy; /items/9999 pokazuje
+brak produktu. Sprawdź również /items/9999/edit. Zmień id w adresie na inny
+istniejący produkt — dane muszą odpowiadać aktualnemu parametrowi.
 
 **Co zrobić:**
 
-Pliki: `src/app/features/items/items-list/items-list.component.html` i `src/app/features/items/item/item.component.html`.
-- Wiersz pozostaje osobnym komponentem. Przycisk emituje picked z id produktu, rodzic zapisuje selectedId.
-- Użyj istniejących input/output. Nie zmieniaj produktu otrzymanego przez input.
-- Dodaj aliasy $odd i $first do @for oraz klasy alternate-row i first-row (CSS już istnieje). Zachowaj track item.id.
-- Dodaj etykietę aria-label przycisku zawierającą nazwę produktu i wyróżnij wagą tekstu ilość równą zero.
-- Po filtrowaniu i dostawie wybór nadal dotyczy tego samego id.
-Źródła: https://angular.dev/guide/components/outputs · https://angular.dev/guide/templates/binding · https://angular.dev/guide/templates/control-flow
+`src/app/app.routes.ts`: dodaj lazy routes `/items/:id` i `/items/:id/edit` do gotowych komponentów. Trasa ** pozostaje ostatnia. Linki w wierszu i karcie są dostarczone.
+Podepnij validItemIdGuard do obu tras. Uzupełnij guard: id musi być dodatnią bezpieczną liczbą całkowitą; w przeciwnym razie zwróć UrlTree do `/items`.
+Poprawny format nie dowodzi istnienia produktu: `/items/9999` ma pokazać brak produktu, a nie błąd formatu. Sprawdź zmianę parametru i powrót do listy.
+Źródła: https://angular.dev/guide/routing/define-routes · https://angular.dev/guide/routing/route-guards
 
 **Wskazówki ze szkolenia:**
 
-- Część 1, slajd 16: „Rodzic i dziecko”.
-- Część 1, slajd 17: „Ten sam kontrakt, nowy zapis”.
-- Część 1, slajd 20: „Lista i tożsamość elementów”.
-- Część 1, slajd 21: „Pozycja wiersza i jego wygląd”.
+- Część 2, slajd 12: „Router wybiera stronę”.
+- Część 2, slajd 13: „Strona składa się z komponentów”.
+- Część 2, slajd 14: „Parametr może zmienić się w czasie”.
+- Część 2, slajd 19: „Guard kontroluje nawigację”.
 
-## 3. Formatowanie i pipe (20–30 min)
+## 3. Formularz i zapis (35–50 min)
 
-**Cel:** oddzielić format wyświetlania od danych produktu i napisać własną transformację.
+**Cel:** zapisywać wyłącznie poprawne dane i pokazywać wynik zapisu.
 
-**Sprawdź wynik:** cena ma walutę PLN i dwie cyfry po przecinku; liczba w modelu
-pozostaje liczbą. Dla domyślnego progu sprawdź: 0 → „Brak w magazynie”,
-3 → „Ostatnie sztuki: 3”, 4 → „Dostępne: 4”. Z progiem 5 wartość 4 daje
-„Ostatnie sztuki: 4”. Porównaj także zachowanie wartości ujemnej z kontraktem poniżej.
-Po części 1 wystarcza kontrola ręczna; pisanie testów wykonaj po omówieniu testowania
-w części 2, slajd 17 „Jeden test, konkretne zachowanie”.
+**Sprawdź wynik:** pusta nazwa, same spacje, cena -1 oraz ilość -1 lub 1.5 blokują zapis.
+Popraw dane: nazwa „Notes”, cena 12.50, ilość 2. Zapis prowadzi do szczegółów,
+a karta i lista pokazują nowe wartości. Odśwież stronę: wracają dane JSON.
+Nie traktuj braku trwałości jako błędu — w tym ćwiczeniu zapis jest w pamięci.
+Prześledź także gałąź błędu zapisu w kodzie: musi przywracać możliwość ponowienia.
 
 **Co zrobić:**
 
-Pliki: `src/app/features/items/item/item.component.html`, `src/app/shared/pipes/stock-label.pipe.ts`.
-- Użyj CurrencyPipe do ceny PLN z dwoma miejscami po przecinku; dane locale są już zarejestrowane.
-- stockLabel: quantity <= 0 → „Brak w magazynie”, quantity <= threshold → „Ostatnie sztuki: N”, pozostałe → „Dostępne: N”. Próg domyślny to 3.
-- Pipe zwraca tekst i nie zmienia danych. Testy dla -1, 0, 3, 4 i progu 5 przygotuj według checklisty. Po części 1 możesz je najpierw sprawdzić ręcznie; warsztat testowania pojawia się w części 2.
-Źródła: https://angular.dev/guide/templates/pipes · https://angular.dev/guide/testing/pipes
+`src/app/features/items/item-edit/item-edit.component.ts`: dodaj walidatory. Nazwa wymagana, co najmniej 2 znaki i nie same spacje; cena >= 0; ilość >= 0 i całkowita. Gotowe komunikaty są w HTML.
+Uzupełnij save: markAllAsTouched, blokada invalid/braku produktu/powtórnego zapisu; przekaż oryginalny produkt oraz wartości formularza do saveItem. Po powodzeniu ustaw pristine i wróć do szczegółów. Po błędzie pokaż komunikat i pozwól ponowić próbę. Posprzątaj subskrypcję.
+Po zapisie sprawdź kartę i listę; po odświeżeniu lokalne zmiany znikają — to zamierzony kontrakt ćwiczenia.
+Źródła: https://angular.dev/guide/forms/reactive-forms · https://angular.dev/guide/forms/form-validation
 
 **Wskazówki ze szkolenia:**
 
-- Część 1, slajd 23: „Pipe formatuje wartość”.
-- Część 1, slajd 24: „Pipes: wybierz format danych”.
-- Część 1, slajd 25: „Własny pipe dostępności”.
+- Część 2, slajd 15: „Formularz ma model w TypeScript”.
+- Część 2, slajd 16: „Walidacja: reguła i komunikat”.
+- Część 2, slajd 18: „Zapis kończy się wynikiem”.
 
-## 4. Zachowanie elementu (20–30 min)
+## 4. Niezapisane zmiany i sprawdzenie rozwiązania (25–40 min)
 
-**Cel:** dodać wielokrotnego użytku zachowanie hosta bez tworzenia nowego komponentu.
+**Cel:** użytkownik świadomie decyduje o porzuceniu zmian podczas nawigacji w aplikacji.
 
-**Sprawdź wynik:** najedź na wiersz i odsuń kursor — obramowanie pojawia się i znika.
-Powtórz samą klawiaturą: Tab przenosi fokus do przycisku wewnątrz wiersza,
-a przejście do następnego wiersza usuwa wyróżnienie poprzedniego.
-Zmień przekazany kolor i sprawdź, że nie trzeba edytować logiki dyrektywy.
+**Sprawdź wynik:** otwórz edycję i wróć bez zmian — brak pytania.
+Zmień nazwę i użyj linku powrotu: anulowanie zostawia formularz z danymi,
+potwierdzenie pozwala wyjść. Po udanym zapisie powrót nie wymaga potwierdzenia.
+Uzupełnij testy oznaczone TODO zgodnie z poleceniem; pominięty test nie weryfikuje zachowania.
 
 **Co zrobić:**
 
-Plik: `src/app/shared/directives/highlight.directive.ts`.
-- Uzupełnij host: mouseenter/focusin włączają active, mouseleave/focusout wyłączają.
-- Ustaw outline 2px w kolorze z appHighlight, tylko gdy active jest true.
-- Sprawdź klawiaturę: fokus przycisku wewnątrz wiersza również uruchamia zachowanie.
-- Dyrektywa nie zna nazwy produktu i nie renderuje własnego szablonu.
-Źródło: https://angular.dev/guide/directives/attribute-directives
+Uzupełnij hasUnsavedChanges i unsavedChangesGuard. Podepnij canDeactivate do edycji: formularz dirty wymaga potwierdzenia wyjścia. Anulowanie zostawia dane; zapis ustawia pristine. Guard nie zabezpiecza zamknięcia całej karty ani nie zastępuje serwerowej autoryzacji.
+Otwórz `src/app/core/guards/valid-item-id.guard.spec.ts`. Helper `checkId` oraz konfiguracja DI są dostarczone. Działający test dla `1` i `9999` pokazuje składnię `expect`. `9999` przechodzi kontrolę formatu, choć produktu może nie być w danych.
+
+Zastąp pięć `it.todo` wykonywanymi testami dla `abc`, `0`, `-1`, `1.5` oraz `9007199254740992` (poza bezpiecznym zakresem liczb całkowitych). Skorzystaj z podanego w komentarzu wzorca: wynik porównaj z `Router.createUrlTree(['/items'])`. Dodaj import Router. Test powinien sprawdzać przekierowanie, nie samo `false`. Nie zmieniaj implementacji guarda, aby ominąć wymagania.
+
+Uruchom `npm test`. Pominięte TODO nie oznaczają ukończenia ćwiczenia. Dla chętnych pozostają test ponownego pobrania po błędzie HTTP oraz test walidacji formularza.
+Źródła: https://angular.dev/guide/routing/route-guards · https://angular.dev/guide/testing
 
 **Wskazówki ze szkolenia:**
 
-- Część 1, slajd 26: „Dyrektywa atrybutowa”.
+- Część 2, slajd 17: „Jeden test, konkretne zachowanie”.
+- Część 2, slajd 20: „Nie zgub niezapisanych zmian”.
 
-## Bonus (opcjonalnie, 15–25 min)
+## Bonus
 
-**Sprawdź wynik bonusu:** data produktu jest czytelnie sformatowana, a przełącznik
-kontroluje widoczność dodatkowej informacji. Potrafisz wyjaśnić, dlaczego ukrycie HTML
-nie chroni danych na serwerze. Bonus nie jest warunkiem ukończenia zestawu.
+**Sprawdź wynik bonusu:** w Network znajdź nagłówek X-Training-Demo przy lokalnym
+żądaniu /assets/. Wskaż warunek w interceptorze, który ogranicza jego dodawanie.
+Nie zmieniaj mechanizmu HTTP na httpResource w ramach obowiązkowego rozwiązania.
 
 **Co zrobić:**
 
-Dodaj DatePipe do utworzenia opisu daty produktu (createdAt) oraz UpperCasePipe do tego opisu. Zachowaj czytelne kolumny. Osobno wypróbuj istniejącą PermissionDirective na dodatkowej informacji przełączanej checkboxem; ukrycie treści nie jest autoryzacją. Przykłady dyrektywy i podsumowania @defer są dostarczone jako pomoc, nie są kolejnym wymaganym zadaniem.
+Prześledź istniejący interceptor i wskaż, dlaczego dla niektórych żądań zachowanie powinno zależeć od adresu. Nie dodawaj prawdziwych tokenów. Porównanie httpResource lub Signal Forms to dodatek, nie warunek wykonania zadania.
+
+Pomoc AI jest opcjonalna: poproś o tabelę przypadków brzegowych lub wyjaśnienie komunikatu, a potem zweryfikuj wynik testem i dokumentacją. Nie przesyłaj sekretów ani danych klientów.
 
 **Wskazówki ze szkolenia:**
 
-- Część 1, slajd 24: „Pipes: wybierz format danych”.
-- Część 1, slajd 27: „Dyrektywa strukturalna”.
-
-## Jak korzystać z pomocy
-
-Najpierw opisz oczekiwane zachowanie. Następnie sprawdź dokumentację i przykład ze szkolenia. Opcjonalny prompt AI: „Zadaj mi pytania naprowadzające na rozwiązanie TODO P1, nie podawaj pełnego kodu”. Możesz użyć dostępnego tańszego modelu do wyjaśnienia błędu. Nie musisz mieć Copilota ani konta AI. Rozwiązanie porównuj dopiero po własnej próbie i wyjaśnij każdą różnicę.
+- Część 2, slajd 22: „Interceptor obsługuje wspólną część HTTP”.
+- Część 2, slajd 33: „Dodatek: HTTP i formularze z signals”.
 
 ## Zakończenie
 

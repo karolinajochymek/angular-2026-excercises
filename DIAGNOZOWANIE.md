@@ -2,7 +2,7 @@
 
 1. Uruchom `npm start`. Najpierw przeczytaj pierwszy błąd kompilacji w terminalu: plik, linia i nazwa pola. Angular Language Service pomaga znaleźć błąd szablonu w edytorze.
 2. Otwórz narzędzia przeglądarki (F12). W Console sprawdź pierwszy błąd i jego stos. Ostrzeżenie nie zawsze jest przyczyną awarii.
-3. W Network odtwórz akcję. Dla HTTP sprawdź adres, status i Response; status 200 z pustą tablicą jest innym przypadkiem niż 404. W części 1 sprawdź pobranie kodu po kliknięciu podsumowania @defer; ta część nie pobiera listy przez HTTP.
+3. W Network odtwórz akcję. Dla HTTP sprawdź adres, status i Response; status 200 z pustą tablicą jest innym przypadkiem niż 404. Przełącz scenariusz błąd → normalny i sprawdź ponowne pobranie `/assets/items.json`. Osobno obserwuj pobranie kodu podsumowania po kliknięciu placeholdera @defer.
 4. Angular DevTools pozwala obejrzeć drzewo komponentów podczas pracy w trybie developerskim. Ustal, kto posiada stan, zanim zaczniesz go zmieniać.
 5. Zmień jeden warunek i ponów próbę. `npm test` sprawdza zachowanie; `npm run build` sprawdza również szablony.
 
@@ -14,7 +14,8 @@ w modelu lub powiązaniu, zamiast wyłączać kontrolę typów.
 
 `items()[0].quantity++` jest tutaj błędem TypeScript, ponieważ `Item.quantity` ma
 `readonly`. Bez tej ochrony sama mutacja wnętrza obiektu nie zmienia referencji
-przechowywanej w signal. W zadaniu P1.1 uzupełniasz `restock()` przez `update`, nową tablicę i nowe obiekty.
+przechowywanej w signal. Dostarczone `CatalogService.saveItem()` używa `update`
+i nowych obiektów do zapisu lokalnych edycji; lista odczytuje wynik pobrania przez computed.
 `readonly` nie jest zamrożeniem danych w JavaScript.
 
 W Angularze 22 `?.` w szablonie zwraca `undefined`, gdy lewa strona jest null lub
@@ -22,12 +23,14 @@ undefined, tak jak w JavaScript. Przed wersją 22 zwracało `null`. Przy migracj
 sprawdź warunki porównujące wynik dokładnie z null; nie zakładaj identycznej
 semantyki każdego projektu. [Składnia wyrażeń](https://angular.dev/guide/templates/expression-syntax).
 
-## Testy — opcjonalnie po części 2
+## Kontrola testu guarda
 
-Otwórz `src/app/exercise.spec.ts`: test danych pokazuje składnię expect, a it.todo
-opisuje przypadki do uzupełnienia. Po części 1 wystarczy ręczna kontrola z CHECKLISTA.md.
-Po poznaniu testowania dodaj przypadki stockLabel dla -1, 0, 3, 4 i własnego progu.
-Vitest uruchamia builder @angular/build:unit-test. Pominięty test nie potwierdza działania.
+Otwórz `src/app/core/guards/valid-item-id.guard.spec.ts`. Dostarczony helper checkId
+zapewnia kontekst DI. Przewidź true dla 1 i 9999 oraz UrlTree do /items dla abc,
+0, -1, 1.5 i liczby spoza bezpiecznego zakresu. Uruchom npm test.
+W starterze zamień it.todo na testy zgodnie z ZADANIA.md. Nie uznawaj TODO za wynik pozytywny.
+Vitest uruchamia builder @angular/build:unit-test; importy describe/it/expect pochodzą z vitest.
+W starszych projektach spotkasz Karma/Jasmine; nie instaluj typów Jest ani Mocha w tym projekcie.
 
 ## Pomoc AI (opcjonalna)
 

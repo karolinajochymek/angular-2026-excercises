@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { ItemsListComponent } from './features/items/items-list/items-list.component';
+import { RouterOutlet, RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 @Component({
   selector: 'app-root',
-  imports: [ItemsListComponent],
+  imports: [RouterOutlet, RouterLink, MatButtonModule],
   templateUrl: './app.component.html',
 })
 export class AppComponent {}

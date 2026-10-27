@@ -1,6 +1,6 @@
-# Angular 2026 — ćwiczenia, część 1
+# Angular 2026 — ćwiczenia, część 2
 
-Wariant: **starter-1**. Starter z celowymi TODO. Interfejs się uruchamia, ale zadania nie są jeszcze wykonane.
+Wariant: **starter-2**. Starter z celowymi TODO. Interfejs się uruchamia, ale zadania nie są jeszcze wykonane.
 
 ## Start
 

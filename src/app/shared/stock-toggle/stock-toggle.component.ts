@@ -1,7 +1,7 @@
 import { Component, model } from '@angular/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-// Temat: komunikacja komponentów i model(). Material dostarcza wygląd i obsługę klawiatury.
+// Material dostarcza wygląd i obsługę klawiatury.
 @Component({
   selector: 'app-stock-toggle',
   imports: [MatSlideToggleModule],

@@ -1,8 +1,15 @@
 import { Directive, input, signal } from '@angular/core';
+// host dodaje zachowanie do istniejącego wiersza listy, bez własnego widoku.
+// Powiązanie [style.outline] reaguje na signal; zdarzenia myszy i fokusu zmieniają jego stan.
 @Directive({
   selector: '[appHighlight]',
-  // TODO P1.4: dodaj binding outline oraz zdarzenia myszy i fokusu.
-  host: {},
+  host: {
+    '[style.outline]': 'active() ? "2px solid " + appHighlight() : null',
+    '(mouseenter)': 'active.set(true)',
+    '(mouseleave)': 'active.set(false)',
+    '(focusin)': 'active.set(true)',
+    '(focusout)': 'active.set(false)',
+  },
 })
 export class HighlightDirective {
   readonly appHighlight = input('#006db1');

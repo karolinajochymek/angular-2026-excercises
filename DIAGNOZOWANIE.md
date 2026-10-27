@@ -14,7 +14,7 @@ w modelu lub powiązaniu, zamiast wyłączać kontrolę typów.
 
 `items()[0].quantity++` jest tutaj błędem TypeScript, ponieważ `Item.quantity` ma
 `readonly`. Bez tej ochrony sama mutacja wnętrza obiektu nie zmienia referencji
-przechowywanej w signal. W zadaniu P1.1 uzupełniasz `restock()` przez `update`, nową tablicę i nowe obiekty.
+przechowywanej w signal. `restock()` używa `update`, nowej tablicy i nowych obiektów.
 `readonly` nie jest zamrożeniem danych w JavaScript.
 
 W Angularze 22 `?.` w szablonie zwraca `undefined`, gdy lewa strona jest null lub
@@ -22,12 +22,14 @@ undefined, tak jak w JavaScript. Przed wersją 22 zwracało `null`. Przy migracj
 sprawdź warunki porównujące wynik dokładnie z null; nie zakładaj identycznej
 semantyki każdego projektu. [Składnia wyrażeń](https://angular.dev/guide/templates/expression-syntax).
 
-## Testy — opcjonalnie po części 2
+## Krótka demonstracja testu — po omówieniu testów w części 2
 
-Otwórz `src/app/exercise.spec.ts`: test danych pokazuje składnię expect, a it.todo
-opisuje przypadki do uzupełnienia. Po części 1 wystarczy ręczna kontrola z CHECKLISTA.md.
-Po poznaniu testowania dodaj przypadki stockLabel dla -1, 0, 3, 4 i własnego progu.
-Vitest uruchamia builder @angular/build:unit-test. Pominięty test nie potwierdza działania.
+Otwórz `src/app/shared/pipes/stock-label.pipe.spec.ts`. Przewidź wynik dla -1, 0, 3 i 4. Uruchom `npm test`. Tymczasowo zmień jedno oczekiwanie, przeczytaj expected/received i przywróć poprawne oczekiwanie. Nie zmieniaj implementacji, aby dopasować ją do błędnego testu.
+
+Projekt używa Vitest przez builder `@angular/build:unit-test` w `angular.json`.
+Importy `describe`, `it` i `expect` pochodzą z Vitest. W utrzymywanych projektach
+możesz spotkać Karma (uruchamianie w przeglądarce) i Jasmine (API testów).
+To inny zestaw narzędzi — nie instaluj typów Jest lub Mocha, aby ukryć błąd konfiguracji Vitest.
 
 ## Pomoc AI (opcjonalna)
 

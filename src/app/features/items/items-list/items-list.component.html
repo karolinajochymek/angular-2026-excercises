@@ -9,6 +9,7 @@
   <div class="toolbar">
     <mat-form-field class="search-field" appearance="outline" subscriptSizing="dynamic">
       <mat-label>Szukaj produktu</mat-label>
+      <!-- Rozdzielamy odczyt i zapis, aby pokazać kierunek danych. Skrót dla WritableSignal: [(ngModel)]="filter". -->
       <input matInput type="search" [ngModel]="filter()" (ngModelChange)="filter.set($event)" />
     </mat-form-field>
     <app-stock-toggle [(checked)]="onlyAvailable" />
@@ -35,14 +36,14 @@
         </tr>
       </thead>
       <tbody>
-        @for (item of filteredItems(); track item.id) {
+        @for (item of filteredItems(); track item.id; let odd = $odd; let first = $first) {
           <!-- $odd i $first opisują pozycję po filtrowaniu; track id opisuje tożsamość produktu. -->
           <!-- app-item uruchamia komponent na tr; jego szablon zawiera pięć komórek td. -->
           <tr
             app-item
             [item]="item"
-            
-            
+            [class.alternate-row]="odd"
+            [class.first-row]="first"
             [selected]="selectedId() === item.id"
             (picked)="selectedId.set($event)"
             [appHighlight]="'var(--mat-sys-primary)'"

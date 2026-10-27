@@ -21,7 +21,8 @@ import { InventorySummaryComponent } from '../inventory-summary/inventory-summar
     InventorySummaryComponent,
   ],
   templateUrl: './items-list.component.html',
-  // Angular 22 domyślnie używa OnPush; tu zapis jest jawny jako przykład.
+  // Angular 22 domyślnie używa OnPush. Tu zapis jest jawny, aby rozpoznać go także w starszym kodzie.
+  // W pozostałych komponentach korzystamy z wartości domyślnej.
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ItemsListComponent {
@@ -36,14 +37,22 @@ export class ItemsListComponent {
   // Nie potrzebujemy effect, który ręcznie kopiowałby wynik do kolejnego signal.
   // Opcjonalnie Copilot: poproś o przypadki brzegowe filtra (spacje, wielkość liter, brak zapasu).
   // Najpierw przewidź wynik samodzielnie; porównaj propozycję z testami, bez zmiany API.
-  // TODO P1.1: wylicz wynik z items, filter i onlyAvailable.
-  readonly filteredItems = computed(() => this.items());
+  readonly filteredItems = computed(() => {
+    const query = this.filter().trim().toLocaleLowerCase('pl');
+    return this.items().filter(
+      (item) =>
+        item.name.toLocaleLowerCase('pl').includes(query) &&
+        (!this.onlyAvailable() || item.quantity > 0),
+    );
+  });
   readonly selectedItem = computed(() =>
     this.items().find((item) => item.id === this.selectedId()),
   );
   // update korzysta z poprzedniego stanu; map i spread tworzą nową tablicę oraz obiekty.
-  // Dzięki temu zachowujemy niemutowalność: nie wykonujemy items()[0].quantity++.
+  // Item.quantity jest readonly: items()[0].quantity++ zatrzyma już TypeScript.
+  // Bez readonly mutacja obiektu nadal nie powiadamiałaby signal o zmianie referencji.
+  // readonly chroni na etapie kompilacji, nie zamraża obiektu podczas działania aplikacji.
   restock(): void {
-    // TODO P1.1: zwiększ zapas bez mutowania istniejących obiektów.
+    this.items.update((items) => items.map((item) => ({ ...item, quantity: item.quantity + 1 })));
   }
 }

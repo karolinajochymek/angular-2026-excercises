@@ -1,3 +1,4 @@
+import { CurrencyPipe } from '@angular/common';
 import { StockLabelPipe } from '../../../shared/pipes/stock-label.pipe';
 import { MatButtonModule } from '@angular/material/button';
 import { Component, input, output } from '@angular/core';
@@ -9,7 +10,7 @@ import { Item } from '../models/item';
   // Wyjątek dla semantycznego wiersza tabeli; pozostałe komponenty używają elementów app-*.
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'tr[app-item]',
-  imports: [MatButtonModule, StockLabelPipe],
+  imports: [MatButtonModule, CurrencyPipe, StockLabelPipe],
   templateUrl: './item.component.html',
 })
 export class ItemComponent {
